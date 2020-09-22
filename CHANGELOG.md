@@ -1,5 +1,8 @@
 x.y.z Release notes (yyyy-MM-dd)
 =============================================================
+
+This release also contains some of the changes from 5.3.6 - 5.4.3.
+
 ### Enhancements
 * None.
 
@@ -76,9 +79,16 @@ x.y.z Release notes (yyyy-MM-dd)
 
 10.0.0-beta.4 Release notes (2020-08-28)
 =============================================================
+
 ### Enhancements
+
 * Add support for the 64-bit watchOS simulator added in Xcode 12.
-* Add ability to stream change events on a remote MongoDB collection with `[RLMMongoCollection watch:delegate:delegateQueue]`, `MongoCollection.watch(delegate)`. When calling `watch(delegate)` you will be given a `RLMChangeStream` (`ChangeStream`), this will be used to invalidate and stop the streaming session by calling `[RLMChangeStream close]` (`ChangeStream.close()`) when needed.
+* Add ability to stream change events on a remote MongoDB collection with
+  `[RLMMongoCollection watch:delegate:delegateQueue]`,
+  `MongoCollection.watch(delegate)`. When calling `watch(delegate)` you will be
+  given a `RLMChangeStream` (`ChangeStream`), this will be used to invalidate
+  and stop the streaming session by calling `[RLMChangeStream close]`
+  (`ChangeStream.close()`) when needed.
 * Add `MongoCollection.watch`, which is a Combine publisher that will stream
   change events each time the remote MongoDB collection is updated.
 * Add ability to open a synced Realm with a `nil` partition value.
@@ -269,8 +279,113 @@ later will be able to open the new file format.
 
 * Upgraded realm-core from v6.0.3 to v10.0.0-beta.1
 * Upgraded realm-sync from v5.0.1 to v10.0.0-beta.2
-* Upgraded realm-core from v6.0.6 to v6.0.7
-* Upgraded realm-sync from v5.0.5 to v5.0.6
+
+5.4.3 Release notes (2020-09-21)
+=============================================================
+
+### Fixed
+
+* Fix compilation via Carthage when using Xcode 12 ([#6717](https://github.com/realm/realm-cocoa/issues/6717)).
+
+### Compatibility
+
+* File format: Generates Realms with format v11 (Reads and upgrades all previous formats)
+* Realm Object Server: 3.21.0 or later.
+* Realm Studio: 3.12 or later.
+* APIs are backwards compatible with all previous releases in the 5.x.y series.
+* Carthage release for Swift is built with Xcode 12.
+
+5.4.2 Release notes (2020-09-17)
+=============================================================
+
+### Enhancements
+
+* Add prebuilt binary for Xcode 12 to the release package.
+
+### Fixed
+
+* Fix Archiving the Realm and RealmSwift frameworks with Xcode 12.
+  ([#6774](https://github.com/realm/realm-cocoa/issues/6774))
+
+### Compatibility
+
+* File format: Generates Realms with format v11 (Reads and upgrades all previous formats)
+* Realm Object Server: 3.21.0 or later.
+* Realm Studio: 3.12 or later.
+* APIs are backwards compatible with all previous releases in the 5.x.y series.
+* Carthage release for Swift is built with Xcode 12.
+
+5.4.1 Release notes (2020-09-16)
+=============================================================
+
+### Enhancements
+
+* Add prebuilt binary for Xcode 11.7 to the release package.
+
+### Fixed
+
+* Fix deadlocks when opening a Realm file in both the iOS simulator and Realm
+  Studio ([#6743](https://github.com/realm/realm-cocoa/issues/6743), since 5.3.6).
+* Fix Springboard deadlocking when an app is unsuspended while it has an open
+  Realm file which is stored in an app group on iOS 10-12
+  ([#6749](https://github.com/realm/realm-cocoa/issues/6749), since 5.3.6).
+* If you use encryption your application cound crash with a message like
+  "Opening Realm files of format version 0 is not supported by this version of
+  Realm". ([#6889](https://github.com/realm/realm-java/issues/6889) among others, since 5.0.0)
+* Confining a Realm to a serial queue would throw an error claiming that the
+  queue was not a serial queue on iOS versions older than 12.
+  ([#6735](https://github.com/realm/realm-cocoa/issues/6735), since 5.0.0).
+* Results would sometimes give stale results inside a write transaction if a
+  write which should have updated the Results was made before the first access
+  of a pre-existing Results object.
+  ([#6721](https://github.com/realm/realm-cocoa/issues/6721), since 5.0.0)
+
+### Compatibility
+
+* File format: Generates Realms with format v11 (Reads and upgrades all previous formats)
+* Realm Object Server: 3.21.0 or later.
+* Realm Studio: 3.12 or later.
+* APIs are backwards compatible with all previous releases in the 5.x.y series.
+* Carthage release for Swift is built with Xcode 11.7.
+
+### Internal
+
+* Upgraded realm-core from v6.0.25 to v6.0.26
+* Upgraded realm-sync from v5.0.22 to v5.0.23
+
+5.4.0 Release notes (2020-09-09)
+=============================================================
+
+This version bumps the Realm file format version. This means that older
+versions of Realm will be unable to open Realm files written by this version,
+and a new version of Realm Studio will be required. There are no actual format
+changes and the version bump is just to force a re-migration of incorrectly
+upgraded Realms.
+
+### Fixed
+
+* Upgrading pre-5.x files with string primary keys would result in a file where
+  `realm.object(ofType:forPrimaryKey:)` would fail to find the object.
+  ([#6716](https://github.com/realm/realm-cocoa/issues/6716), since 5.2.0)
+* A write transaction which modifies an object with more than 16 managed
+  properties and causes the Realm file to grow larger than 2 GB could cause an
+  assertion failure mentioning "m_has_refs". ([JS #3194](https://github.com/realm/realm-js/issues/3194), since 5.0.0).
+* Objects with more than 32 properties could corrupt the Realm file and result
+  in a variety of crashes. ([Java #7057](https://github.com/realm/realm-java/issues/7057), since 5.0.0).
+
+### Compatibility
+
+* File format: Generates Realms with format v11 (Reads and upgrades all previous formats)
+* Realm Object Server: 3.21.0 or later.
+* Realm Studio: 3.12 or later.
+* APIs are backwards compatible with all previous releases in the 5.x.y series.
+* Carthage release for Swift is built with Xcode 11.6.
+
+### Internal
+
+* Upgraded realm-core from v6.0.23 to v6.0.25
+* Upgraded realm-sync from v5.0.20 to v5.0.22
+
 5.3.6 Release notes (2020-09-02)
 =============================================================
 
